@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
-import { useFetcher } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Editor, toUnicodeBoldFromHTML } from "../wysiwyg/Editor";
+import { generateLinkedInPost } from "../utils/linkedin-generator";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,7 +11,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const fetcher = useFetcher<{ variants: Array<{ text: string; plain: string; unicodeBold: string; }> , model: string, modelSize: string, words: number }>();
   const [prompt, setPrompt] = useState("");
   const [audience, setAudience] = useState("");
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
@@ -21,31 +20,46 @@ export default function Home() {
   const [modelSize, setModelSize] = useState<"small" | "medium" | "large" | "creative">("medium");
   const [words, setWords] = useState<number>(160);
   const [progress, setProgress] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [variants, setVariants] = useState<Array<{ text: string; plain: string; unicodeBold: string; }>>([]);
 
-  const variants = fetcher.data?.variants ?? [];
   const selected = useMemo(() => (selectedIdx != null ? variants[selectedIdx] : undefined), [variants, selectedIdx]);
 
-  const onGenerateAI = () => {
+  const onGenerateAI = async () => {
     setSelectedIdx(null);
     const input = prompt?.trim();
     setProgress(0);
+    setIsLoading(true);
+    
     const interval = setInterval(() => setProgress(p => (p < 95 ? p + Math.max(1, Math.floor((100 - p) / 10)) : p)), 120);
-    fetcher.submit(
-      { prompt: input, audience, askAI: true, modelSize, words },
-      { method: "POST", action: "/api/generate", encType: "application/json" }
-    );
-    const stop = () => { clearInterval(interval); setProgress(100); setTimeout(() => setProgress(0), 600); };
-    const unsub = setInterval(() => {
-      if (fetcher.state === "idle") { clearInterval(unsub); stop(); }
-    }, 100);
+    
+    try {
+      const result = await generateLinkedInPost({
+        prompt: input,
+        audience,
+        askAI: true,
+        modelSize,
+        words
+      });
+      
+      setVariants(result.variants);
+      setProgress(100);
+      setTimeout(() => setProgress(0), 600);
+    } catch (error) {
+      console.error("Failed to generate post:", error);
+      setProgress(0);
+    } finally {
+      clearInterval(interval);
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    const v = fetcher.data?.variants?.[0];
+    const v = variants?.[0];
     if (!v) return;
     const html = (v.text || v.plain || "").replace(/\n/g, "<br>");
     setRichHtml(html);
-  }, [fetcher.data]);
+  }, [variants]);
 
   const mapWith = (s: string, upperStart: number, lowerStart: number, digitStart?: number) =>
     s
@@ -113,7 +127,7 @@ export default function Home() {
             <label className="text-sm font-medium mt-3">What is the post about?</label>
             <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="border rounded px-3 py-2 min-h-28" placeholder="e.g., vacation benefits, team productivity, new product launch" />
             <div className="flex justify-center mt-4">
-              <button onClick={onGenerateAI} className="px-6 py-3 rounded bg-black text-white disabled:opacity-50 font-medium" disabled={fetcher.state !== "idle"}>Create with AI</button>
+              <button onClick={onGenerateAI} className="px-6 py-3 rounded bg-black text-white disabled:opacity-50 font-medium" disabled={isLoading}>Create with AI</button>
             </div>
             <label className="text-sm font-medium mt-6">Editor. Use Bold or style picker to apply Unicode fonts</label>
             <Editor valueHtml={richHtml} onChangeHtml={setRichHtml} />
@@ -121,7 +135,7 @@ export default function Home() {
 
           </div>
 
-          {fetcher.state !== "idle" && (
+          {isLoading && (
             <div className="flex flex-col items-center justify-center py-8">
               <div className="relative w-16 h-16 mb-4">
                 <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>

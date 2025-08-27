@@ -1,5 +1,3 @@
-import type { Route } from "../+types/root";
-
 type GenerateBody = {
   prompt?: string;
   audience?: string;
@@ -50,25 +48,6 @@ async function callVenice(messages: VeniceMessage[], model: string, maxTokens = 
   return content ?? "";
 }
 
-
-
-function toUnicodeVariants(input: string) {
-  // Correct Unicode mappings for Mathematical Bold and Monospace
-  const mapWith = (s: string, upperStart: number, lowerStart: number, digitStart?: number) =>
-    s
-      .replace(/[A-Z]/g, c => String.fromCodePoint(upperStart + (c.charCodeAt(0) - 0x41)))
-      .replace(/[a-z]/g, c => String.fromCodePoint(lowerStart + (c.charCodeAt(0) - 0x61)))
-      .replace(/[0-9]/g, c => (digitStart != null ? String.fromCodePoint(digitStart + (c.charCodeAt(0) - 0x30)) : c));
-
-  const bold = (s: string) => mapWith(s, 0x1D400, 0x1D41A, 0x1D7CE);
-  const mono = (s: string) => mapWith(s, 0x1D670, 0x1D68A, 0x1D7F6);
-  return {
-    normal: input,
-    bold: bold(input),
-    mono: mono(input),
-  };
-}
-
 function replaceBoldTagsWithUnicode(input: string) {
   // Convert <b>...</b> to Unicode bold, remove all other HTML, strip asterisks
   const mapWith = (s: string, upperStart: number, lowerStart: number, digitStart?: number) =>
@@ -93,8 +72,7 @@ function replaceBoldTagsWithUnicode(input: string) {
   return out.trim();
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const body = (await request.json()) as GenerateBody;
+export async function generateLinkedInPost(body: GenerateBody) {
   const { prompt = "", audience, askAI = true, modelSize = "medium", words = 160 } = body;
   const finalAudience = audience?.trim() || "professionals";
   const model = chooseModel(modelSize);
@@ -125,24 +103,18 @@ export async function action({ request }: Route.ActionArgs) {
     const unicodeBold = replaceBoldTagsWithUnicode(textWithHtmlBold);
     const evaluated = [{ text: textWithHtmlBold, plain: sanitizedPlain, unicodeBold }];
 
-    return Response.json({
+    return {
       variants: evaluated,
       model,
       modelSize,
       words,
-    });
+    };
   }
 
-  return Response.json({
+  return {
     variants: [],
     model,
     modelSize,
     words,
-  });
+  };
 }
-
-export async function loader() {
-  return Response.json({ ok: true });
-}
-
-
