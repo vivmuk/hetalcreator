@@ -100,18 +100,18 @@ export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mx-auto max-w-3xl flex flex-col gap-6">
-        <header className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Hetal's LinkedIn Post Studio</h1>
+        <header className="flex items-center justify-between bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Hetal's LinkedIn Post Studio</h1>
         </header>
 
-        <section className="flex flex-col gap-6">
+        <section className="flex flex-col gap-6 bg-white rounded-2xl p-6 shadow-lg border border-blue-100">
           <div className="flex flex-col gap-3">
-            <label className="text-sm font-medium">Audience</label>
-            <input value={audience} onChange={(e) => setAudience(e.target.value)} className="border rounded px-3 py-2" placeholder="e.g., SME founders, HR managers" />
+            <label className="text-sm font-semibold text-purple-700">Audience</label>
+            <input value={audience} onChange={(e) => setAudience(e.target.value)} className="border-2 border-purple-200 rounded-lg px-4 py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200" placeholder="e.g., SME founders, HR managers" />
             <div className="grid grid-cols-3 gap-2 items-end">
               <div className="col-span-2">
-                <label className="text-sm font-medium">Model</label>
-                <select value={modelSize} onChange={(e) => setModelSize(e.target.value as any)} className="border rounded px-3 py-2 w-full">
+                <label className="text-sm font-semibold text-blue-700">Model</label>
+                <select value={modelSize} onChange={(e) => setModelSize(e.target.value as any)} className="border-2 border-blue-200 rounded-lg px-4 py-3 w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200">
                   <option value="small">qwen3-4b</option>
                   <option value="medium">mistral-31-24b</option>
                   <option value="large">qwen3-235b</option>
@@ -119,35 +119,38 @@ export default function Home() {
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Words</label>
-                <input type="number" value={words} onChange={(e)=> setWords(parseInt(e.target.value || "160", 10))} className="border rounded px-3 py-2 w-full" min={80} max={350} step={10} />
+                <label className="text-sm font-semibold text-green-700">Words</label>
+                <input type="number" value={words} onChange={(e)=> setWords(parseInt(e.target.value || "160", 10))} className="border-2 border-green-200 rounded-lg px-4 py-3 w-full focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200" min={80} max={350} step={10} />
               </div>
             </div>
-            <div className="text-xs text-gray-600">Models: Small (fast), Medium (balanced), Large (quality), Creative (uncensored).</div>
-            <label className="text-sm font-medium mt-3">What is the post about?</label>
-            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="border rounded px-3 py-2 min-h-28" placeholder="e.g., vacation benefits, team productivity, new product launch" />
-            <div className="flex justify-center mt-4">
-              <button onClick={onGenerateAI} className="px-6 py-3 rounded bg-black text-white disabled:opacity-50 font-medium" disabled={isLoading}>Create with AI</button>
+            <div className="text-sm text-slate-600 bg-slate-50 rounded-lg p-3 border-l-4 border-indigo-400">💡 Models: Small (fast), Medium (balanced), Large (quality), Creative (uncensored).</div>
+            <label className="text-sm font-semibold text-indigo-700 mt-3">What is the post about?</label>
+            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="border-2 border-indigo-200 rounded-lg px-4 py-3 min-h-32 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 resize-none" placeholder="e.g., vacation benefits, team productivity, new product launch" />
+            <div className="flex justify-center mt-6">
+              <button onClick={onGenerateAI} className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white disabled:opacity-50 font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:hover:scale-100" disabled={isLoading}>
+                {isLoading ? '✨ Creating Magic...' : '🚀 Create with AI'}
+              </button>
             </div>
-            <label className="text-sm font-medium mt-6">Editor. Use Bold or style picker to apply Unicode fonts</label>
+            <label className="text-sm font-semibold text-emerald-700 mt-8">✏️ Editor. Use Bold or style picker to apply Unicode fonts</label>
             <Editor valueHtml={richHtml} onChangeHtml={setRichHtml} />
-            <div className="text-sm text-gray-500">Tip: Add an anecdote and a measurable result. Keep it concise.</div>
+            <div className="text-sm text-emerald-600 bg-emerald-50 rounded-lg p-3 border-l-4 border-emerald-400">💡 Tip: Add an anecdote and a measurable result. Keep it concise.</div>
 
           </div>
 
           {isLoading && (
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className="relative w-16 h-16 mb-4">
-                <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            <div className="flex flex-col items-center justify-center py-12 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl border border-purple-200">
+              <div className="relative w-20 h-20 mb-6">
+                <div className="absolute inset-0 border-4 border-purple-200 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
               </div>
-              <div className="text-lg font-medium">Creating a magical post...</div>
+              <div className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">✨ Creating a magical post...</div>
+              <div className="text-sm text-purple-600 mt-2">This might take a moment</div>
             </div>
           )}
 
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Best practices</h2>
-            <div className="rounded border p-4 text-sm space-y-2">
+          <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100">
+            <h2 className="text-xl font-bold text-orange-700 mb-4 flex items-center">📚 Best practices</h2>
+            <div className="rounded-xl border-2 border-orange-200 p-5 text-sm space-y-2 bg-orange-50">
               <ul className="list-disc pl-5 space-y-1">
                 <li>Open with a clear question or CTA to spark comments.</li>
                 <li>Keep paragraphs short; use 3–5 bullets for lists.</li>

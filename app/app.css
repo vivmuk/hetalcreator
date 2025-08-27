@@ -7,9 +7,5 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  @apply bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen;
 }

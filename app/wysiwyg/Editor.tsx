@@ -88,12 +88,12 @@ export function Editor({ valueHtml, onChangeHtml }: Props) {
   };
 
   return (
-    <div className="border rounded max-w-3xl mx-auto">
-      <div className="flex flex-wrap gap-2 p-2 border-b items-center justify-center sticky top-0 bg-white z-10">
-        <button className="px-2 py-1 text-sm border rounded hover:bg-gray-100 active:bg-gray-200" type="button" title="Bold" onClick={() => exec("bold")}>𝐁</button>
-        <button className="px-2 py-1 text-sm border rounded hover:bg-gray-100 active:bg-gray-200" type="button" title="Italic" onClick={() => exec("italic")}><i>I</i></button>
-        <span className="text-sm text-gray-600">Style on selection:</span>
-        <select value={style} onChange={(e)=> setStyle(e.target.value as any)} className="px-2 py-1 text-sm border rounded hover:bg-gray-50">
+    <div className="border-2 border-emerald-200 rounded-xl max-w-3xl mx-auto shadow-lg overflow-hidden">
+      <div className="flex flex-wrap gap-2 p-4 border-b-2 border-emerald-200 items-center justify-center sticky top-0 bg-gradient-to-r from-emerald-50 to-teal-50 z-10">
+        <button className="px-3 py-2 text-sm border-2 border-purple-200 rounded-lg hover:bg-purple-100 active:bg-purple-200 transition-all duration-200 font-semibold text-purple-700" type="button" title="Bold" onClick={() => exec("bold")}>𝐁</button>
+        <button className="px-3 py-2 text-sm border-2 border-blue-200 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-all duration-200 font-semibold text-blue-700" type="button" title="Italic" onClick={() => exec("italic")}><i>I</i></button>
+        <span className="text-sm font-semibold text-slate-700">✨ Style on selection:</span>
+        <select value={style} onChange={(e)=> setStyle(e.target.value as any)} className="px-3 py-2 text-sm border-2 border-indigo-200 rounded-lg hover:bg-indigo-50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200">
           <option value="bold">Unicode Bold (Math)</option>
           <option value="sansBold">Sans Bold</option>
           <option value="mono">Monospace</option>
@@ -103,16 +103,16 @@ export function Editor({ valueHtml, onChangeHtml }: Props) {
           <option value="smallCaps">Small Caps</option>
           <option value="plain">Plain</option>
         </select>
-        <button className="px-2 py-1 text-sm border rounded hover:bg-gray-100 active:bg-gray-200" type="button" onClick={applyStyleToSelection}>Apply</button>
-        <button className="px-2 py-1 text-sm border rounded hover:bg-gray-100 active:bg-gray-200" type="button" title="Snapshot" onClick={takeSnapshot}>Save</button>
-        <button className="px-2 py-1 text-sm border rounded hover:bg-gray-100 active:bg-gray-200" type="button" title="Revert" onClick={revertSnapshot}>Revert</button>
-        <button className="px-2 py-1 text-sm border rounded hover:bg-gray-100 active:bg-gray-200" type="button" onClick={async ()=>{
+        <button className="px-3 py-2 text-sm border-2 border-green-200 rounded-lg hover:bg-green-100 active:bg-green-200 transition-all duration-200 font-semibold text-green-700" type="button" onClick={applyStyleToSelection}>✨ Apply</button>
+        <button className="px-3 py-2 text-sm border-2 border-orange-200 rounded-lg hover:bg-orange-100 active:bg-orange-200 transition-all duration-200 font-semibold text-orange-700" type="button" title="Snapshot" onClick={takeSnapshot}>💾 Save</button>
+        <button className="px-3 py-2 text-sm border-2 border-red-200 rounded-lg hover:bg-red-100 active:bg-red-200 transition-all duration-200 font-semibold text-red-700" type="button" title="Revert" onClick={revertSnapshot}>↩️ Revert</button>
+        <button className="px-3 py-2 text-sm border-2 border-teal-200 rounded-lg hover:bg-teal-100 active:bg-teal-200 transition-all duration-200 font-semibold text-teal-700" type="button" onClick={async ()=>{
           const el = ref.current; if(!el) return; await navigator.clipboard.writeText(el.innerText);
-        }}>Copy</button>
+        }}>📋 Copy</button>
       </div>
       <div
         ref={ref}
-        className="min-h-40 p-3 outline-none"
+        className="min-h-48 p-4 outline-none bg-white focus:bg-gradient-to-br focus:from-white focus:to-slate-50 transition-all duration-200"
         contentEditable
         onInput={handleInput}
         suppressContentEditableWarning
